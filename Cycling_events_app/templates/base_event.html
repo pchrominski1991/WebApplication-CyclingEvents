@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+    {% block head  %}
+       <meta charset="utf-8"></head>
+    {% endblock %}
+</head>
+<body>
+{% block body %}
+    <h1>NAjlepsze wydarzenia rowerowe.</h1>
+    <img src="/static/logo.png" >
+    {% block content %} {% endblock %}
+{% endblock %}
+        <footer>
+            {% block footer %}{% endblock %}
+            {% if user.is_anonymous %}
+                <a href="{% url 'login' %}">Logowanie</a>
+            {% else %}
+                <p>witaj {{ user.username }}</p>
+                <a href="{% url 'logout' %}">Wyloguj</a>
+            {% endif %}
+        </footer>
+</body>
+</html>
+
+
