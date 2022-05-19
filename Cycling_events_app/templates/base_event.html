@@ -1,25 +1,25 @@
 <!doctype html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
-    {% block head  %}
-       <meta charset="utf-8"></head>
-    {% endblock %}
-</head>
-<body>
-{% block body %}
-    <h1>NAjlepsze wydarzenia rowerowe.</h1>
-    <img src="/static/logo.png" >
-    {% block content %} {% endblock %}
-{% endblock %}
-        <footer>
-            {% block footer %}{% endblock %}
+    <meta charset="utf-8"></head>
+    {% block head %}{% endblock %}
             {% if user.is_anonymous %}
                 <a href="{% url 'login' %}">Logowanie</a>
             {% else %}
-                <p>witaj {{ user.username }}</p>
-                <a href="{% url 'logout' %}">Wyloguj</a>
+                <h4>Witaj {{ user.username }}!</h4>
+                <a href="{% url 'logout' %}">Wyloguj</a> </br>
+                <a href="{%url 'logout' %}">Edytuj dane użytkownika</a>
             {% endif %}
-        </footer>
+</head>
+<body>
+{% block body %}
+
+<h3><p style="text-align: center"><a href="{% url 'main' %}">Moje wydarzenia</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="{% url 'events' %}">Wydarzenia</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'main' %}">Kontakt</a></p></h3>
+    <center><img src="/static/img.png" width='50%'</center>
+</br>
+{% block content %} {% endblock %}
+{% endblock %}
+
 </body>
 </html>
 

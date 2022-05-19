@@ -1,10 +1,16 @@
 {% extends 'base_event.html' %}
 
 {% block body %}
-<form action="" method="POST">
+ <center><form action="" method="POST" >
+    <center><img src="/static/img.png" width = '90%'></center>
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Zaloguj">
-    </form>
+    </form></center>
+<br/>
+<br/>
+<center>
+      <a href="{% url 'main' %}">Kontynuuj jako niezalogowany</a>
+         </center>
 {% endblock %}
 
