@@ -1,16 +1,24 @@
 {% extends 'base_event.html' %}
 
 {% block body %}
+<center><img src="/static/img.png" width = '90%'></center>
+{% if user.is_anonymous %}
  <center><form action="" method="POST" >
-    <center><img src="/static/img.png" width = '90%'></center>
-        {% csrf_token %}
+     {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Zaloguj">
     </form></center>
+</br>
+    <center><a href="{% url 'main' %}">Kontynuuj jako niezalogowany</a></center>
+
+ {% else %}
+</br>
+      <center><a href="{% url 'main' %}">Jesteś zalogowany. Przejdź do strony głównej</a></center>
+{% endif %}
 <br/>
 <br/>
 <center>
-      <a href="{% url 'main' %}">Kontynuuj jako niezalogowany</a>
+
          </center>
 {% endblock %}
 

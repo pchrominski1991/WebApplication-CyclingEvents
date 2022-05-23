@@ -1,8 +1,22 @@
 from django import forms
+from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth.models import User
-from django.forms import PasswordInput
+from django.forms import PasswordInput, SelectDateWidget
+import datetime
 
 from Cycling_events_app.models import EVENT_TYPE, VOIVODESHIP_NAME, CATEGORY_NAME
+
+
+def present_or_future_date(value):
+    if value < datetime.date.today():
+        raise forms.ValidationError("Nie można podać daty z przeszłości!")
+    return value
+
+
+def only_positive_distance(value):
+    if value <= 0:
+        raise forms.ValidationError("Dystans musi być większy od 0")
+    return value
 
 
 class UserForm(forms.Form):
@@ -20,7 +34,8 @@ class AddEventForm(forms.Form):
     event_name = forms.CharField(max_length=128, label="Podaj nazwę wydarzenia")
     event_type = forms.ChoiceField(choices=EVENT_TYPE, label="Podaj typ wydarzenia")
     limit = forms.IntegerField(label="Podaj limit miejsc")
-    distance = forms.FloatField(label="Długość trasy")
+    date = forms.DateField(label="Data wydarzenia", widget=forms.SelectDateWidget, validators=[present_or_future_date])
+    distance = forms.FloatField(label="Długość trasy", min_value=0, validators=[only_positive_distance])
     route_description = forms.CharField(widget=forms.Textarea, label="Opis trasy")
     start = forms.CharField(max_length=128, label="Miejsce startu")
     finish = forms.CharField(max_length=128, label="Miejsce końca trasy")

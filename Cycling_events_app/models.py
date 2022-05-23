@@ -34,13 +34,10 @@ EVENT_TYPE = (
 )
 
 class Cyclist(models.Model):
-    first_name = models.CharField(max_length=64)
-    last_name = models.CharField(max_length=64)
     age = models.IntegerField()
     weight = models.IntegerField
     region = models.IntegerField(choices=CATEGORY_NAME)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-
 
 
 class Category(models.Model):
@@ -54,13 +51,16 @@ class Region(models.Model):
 class Event(models.Model):
     event_name = models.CharField('Nazwa wydarzenia:', max_length=128)
     event_type = models.IntegerField(choices=EVENT_TYPE)
-    limit = models.IntegerField('Ilość miejsc:')
+    limit = models.IntegerField('Ilość miejsc:', blank=True)
     distance = models.FloatField()
     route_description = models.TextField()
+    date = models.DateTimeField()
     start = models.CharField(max_length=128)
     finish = models.CharField(max_length=128)
-    region_name = models.ManyToManyField(Region)
+    region_name = models.ForeignKey(Region, on_delete=models.CASCADE)
     categories = models.ForeignKey(Category, on_delete=models.CASCADE)
+    cyclist = models.ManyToManyField(Cyclist, blank=True)
+
 
 
 class Bike(models.Model):

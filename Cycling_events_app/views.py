@@ -60,12 +60,24 @@ class AddEventView(View):
         if form.is_valid():
             event_name = form.cleaned_data['event_name']
             event_type = form.cleaned_data['event_type']
+            date = form.cleaned_data['date']
             limit = form.cleaned_data['limit']
             route_description = form.cleaned_data['route_description']
             start = form.cleaned_data['start']
             finish = form.cleaned_data['finish']
             region_name = form.cleaned_data['region_name']
-            event = Event.objects.create(event_name=event_name, event_type=event_type, limit=limit, route_description=route_description, start=start, finish=finish,region_name=region_name)
-            return redirect('/categories/')
-        return render(request, 'addCategory.html', {"form": form})
+            categories = form.cleaned_data['categories']
+            cyclist = form.cleaned_data['cyclist']
+            event = Event.objects.create(event_name=event_name,
+                                         event_type=event_type,
+                                         date=date,
+                                         limit=limit,
+                                         route_description=route_description,
+                                         start=start,
+                                         finish=finish,
+                                         region_name=region_name,
+                                         categories=categories,
+                                         cyclist=cyclist)
+            return redirect('/events/')
+        return render(request, 'add_event.html', {"form": form})
 
