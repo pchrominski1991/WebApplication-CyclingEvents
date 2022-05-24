@@ -45,7 +45,7 @@ class Category(models.Model):
 
 
 class Region(models.Model):
-    voivodeship_name = models.IntegerField(choices=CATEGORY_NAME)
+    voivodeship_name = models.IntegerField(choices=VOIVODESHIP_NAME)
 
 
 class Event(models.Model):
@@ -60,7 +60,7 @@ class Event(models.Model):
     region_name = models.ForeignKey(Region, on_delete=models.CASCADE)
     categories = models.ForeignKey(Category, on_delete=models.CASCADE)
     event_participant = models.ManyToManyField(Cyclist)
-    event_creator = models.ForeignKey(User, on_delete=models.CASCADE, default=User)
+    event_creator = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
 
 
 class Bike(models.Model):

@@ -2,9 +2,10 @@ from django.contrib.auth import login, authenticate, get_user_model, logout
 from django.shortcuts import render, redirect
 from django.views import View
 from .forms import UserForm, AddEventForm
-from .models import Event
+from .models import Event, Category, Region
 
 User = get_user_model()
+
 
 class LoginView(View):
     def get(self, request, *args, **kwargs):
@@ -64,19 +65,24 @@ class AddEventView(View):
             limit = form.cleaned_data['limit']
             route_description = form.cleaned_data['route_description']
             start = form.cleaned_data['start']
+            distance = form.cleaned_data['distance']
             finish = form.cleaned_data['finish']
             region_name = form.cleaned_data['region_name']
             categories = form.cleaned_data['categories']
+            category = Category.objects.get(category_name=categories)
+            region = Region.objects.get(voivodeship_name=region_name)
             event = Event.objects.create(event_name=event_name,
                                          event_type=event_type,
                                          date=date,
                                          limit=limit,
                                          route_description=route_description,
+                                         distance=distance,
                                          start=start,
                                          finish=finish,
-                                         region_name=region_name,
-                                         categories=categories,
+                                         event_creator=request.user,
                                          )
+            event.region_name = region
+            event.categories = category
             return redirect('/events/')
         return render(request, 'add_event.html', {"form": form})
 
