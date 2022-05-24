@@ -59,8 +59,8 @@ class Event(models.Model):
     finish = models.CharField(max_length=128)
     region_name = models.ForeignKey(Region, on_delete=models.CASCADE)
     categories = models.ForeignKey(Category, on_delete=models.CASCADE)
-    cyclist = models.ManyToManyField(Cyclist, blank=True)
-
+    event_participant = models.ManyToManyField(Cyclist)
+    event_creator = models.ForeignKey(User, on_delete=models.CASCADE, default=User)
 
 
 class Bike(models.Model):

@@ -67,7 +67,6 @@ class AddEventView(View):
             finish = form.cleaned_data['finish']
             region_name = form.cleaned_data['region_name']
             categories = form.cleaned_data['categories']
-            cyclist = form.cleaned_data['cyclist']
             event = Event.objects.create(event_name=event_name,
                                          event_type=event_type,
                                          date=date,
@@ -77,7 +76,7 @@ class AddEventView(View):
                                          finish=finish,
                                          region_name=region_name,
                                          categories=categories,
-                                         cyclist=cyclist)
+                                         )
             return redirect('/events/')
         return render(request, 'add_event.html', {"form": form})
 

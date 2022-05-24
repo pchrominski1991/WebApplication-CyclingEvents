@@ -1,0 +1,1 @@
+web: gunicorn Cycling_events.wsgi --log-file -
