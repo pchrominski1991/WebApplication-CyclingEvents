@@ -1,10 +1,11 @@
 from django import forms
-from django.contrib.admin.widgets import AdminDateWidget
-from django.contrib.auth.models import User
-from django.forms import PasswordInput, SelectDateWidget
+from django.contrib.auth import get_user_model
+from django.forms import PasswordInput
 import datetime
-
 from Cycling_events_app.models import EVENT_TYPE, VOIVODESHIP_NAME, CATEGORY_NAME
+
+
+User = get_user_model()
 
 
 def present_or_future_date(value):
@@ -17,6 +18,7 @@ def only_positive_distance(value):
     if value <= 0:
         raise forms.ValidationError("Dystans musi być większy od 0")
     return value
+
 
 
 class UserForm(forms.Form):
@@ -41,3 +43,15 @@ class AddEventForm(forms.Form):
     finish = forms.CharField(max_length=128, label="Miejsce końca trasy")
     region_name = forms.ChoiceField(choices=VOIVODESHIP_NAME, label="Region")
     categories = forms.ChoiceField(choices=CATEGORY_NAME, label="Typ roweru")
+
+
+class RegisterForm(forms.ModelForm):
+    username = forms.CharField(label='Nazwa użytkownika')
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password')
+
+
+
+

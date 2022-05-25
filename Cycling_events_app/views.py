@@ -1,8 +1,11 @@
+from django.contrib import messages
 from django.contrib.auth import login, authenticate, get_user_model, logout
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import UserForm, AddEventForm
+from .forms import UserForm, AddEventForm, RegisterForm
 from .models import Event, Category, Region
+from django.contrib.auth.forms import UserCreationForm
+
 
 User = get_user_model()
 
@@ -47,8 +50,10 @@ class MainView(View):
 
 class EventsView(View):
     def get(self, request):
-        #events = Event.objects.order_by('event_name')
-        return render(request=request, template_name='events.html')
+        events = Event.objects.order_by('event_name')
+        return render(request=request, template_name='events.html',context={
+            "events": events
+        })
 
 
 class AddEventView(View):
@@ -83,6 +88,22 @@ class AddEventView(View):
                                          )
             event.region_name = region
             event.categories = category
+            event.save()
             return redirect('/events/')
         return render(request, 'add_event.html', {"form": form})
 
+
+class RegisterView(View):
+    def get(self, request, *args, **kwargs):
+        form = RegisterForm()
+        context = {
+            'form': form
+        }
+        return render(request, 'register.html', context)
+
+    def post(self, request, *args, **kwargs):
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('main')
+        return render(request, 'register.html', {'form': form})

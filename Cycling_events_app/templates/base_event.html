@@ -5,7 +5,7 @@
     {% block head %}{% endblock %}
             {% if user.is_anonymous %}
                 <a href="{% url 'login' %}">Logowanie</a> </br>
-                <a href="{% url 'main' %}">Rejestracja</a>
+                <a href="{% url 'register' %}">Rejestracja</a>
             {% else %}
                 <h4>Witaj {{ user.username }}!</h4>
                 <a href="{% url 'logout' %}">Wyloguj</a> </br>

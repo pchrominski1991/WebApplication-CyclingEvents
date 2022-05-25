@@ -3,7 +3,7 @@
     <h3> Wydarzenia spełniające podane kryteria:</h3>
     <ul>
     {% for event in events %}
-        <li><{{ event.event_name }}</li>
+        <li>{{ event.event_name}} {{ event.categories}} {{event.region_name}}</li>
     {% endfor %}
     </ul>
     <br/> <br/>

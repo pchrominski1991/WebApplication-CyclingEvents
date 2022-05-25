@@ -1,5 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+User = get_user_model()
 
 CATEGORY_NAME = (
     (1, "rower szosowy"),
@@ -33,19 +38,45 @@ EVENT_TYPE = (
     (3, "coffee ride"),
 )
 
-class Cyclist(models.Model):
-    age = models.IntegerField()
-    weight = models.IntegerField
-    region = models.IntegerField(choices=CATEGORY_NAME)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+GENDER_CHOICES = (
+    ('M', 'MALE'),
+    ('F', 'FEMALE')
+)
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
+    age = models.PositiveIntegerField(blank=True, null=True)
+    weight = models.PositiveIntegerField(blank=True, null=True)
+    region = models.IntegerField(choices=CATEGORY_NAME, blank=True, null=True)
+    gender = models.CharField(choices=GENDER_CHOICES, blank=True, null=True, max_length=15)
+
+
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save()
+
+
 
 
 class Category(models.Model):
     category_name = models.IntegerField(choices=CATEGORY_NAME)
 
+    def __str__(self):
+        return self.get_category_name_display()
+
 
 class Region(models.Model):
     voivodeship_name = models.IntegerField(choices=VOIVODESHIP_NAME)
+
+    def __str__(self):
+        return self.get_voivodeship_name_display()
+
+
 
 
 class Event(models.Model):
@@ -57,10 +88,11 @@ class Event(models.Model):
     date = models.DateTimeField()
     start = models.CharField(max_length=128)
     finish = models.CharField(max_length=128)
-    region_name = models.ForeignKey(Region, on_delete=models.CASCADE)
-    categories = models.ForeignKey(Category, on_delete=models.CASCADE)
-    event_participant = models.ManyToManyField(Cyclist)
+    region_name = models.ForeignKey(Region, on_delete=models.CASCADE, null=True)
+    categories = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
+    event_participant = models.ManyToManyField(Profile)
     event_creator = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
+
 
 
 class Bike(models.Model):
