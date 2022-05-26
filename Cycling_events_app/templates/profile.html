@@ -1,0 +1,16 @@
+{% extends 'base_event.html' %}
+{% block content %}
+    <h3> Dane użytkownika:</h3>
+    <ul>
+    {% if profiles %}
+      Imię i nazwisko: {{ user.first_name }} {{ user.last_name }} </br>
+      Adres e-mail: {{ user.email }} </br>
+        Płeć: {{ user.profile.get_gender_display }} </br>
+        Wiek: {{ user.profile.age }} lat </br>
+        Waga: {{ user.profile.weight }} kg </br>
+        Województwo: {{ user.profile.get_region_display}}
+    {% endif %}
+    </ul>
+    <br/> <br/>
+    <h4><a href="/edit_profile/">Edytuj dane użytkownika</a></h4>
+{% endblock %}
