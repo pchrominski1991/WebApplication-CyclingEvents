@@ -9,7 +9,7 @@
             {% else %}
                 <h4>Witaj {{ user.username }}!</h4>
                 <a href="{% url 'logout' %}">Wyloguj</a> </br>
-                <a href="{%url 'logout' %}">Edytuj dane użytkownika</a>
+                <a href="{%url 'profile' %}">Dane użytkownika</a>
             {% endif %}
 </head>
 <body>

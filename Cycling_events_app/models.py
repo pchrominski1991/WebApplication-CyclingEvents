@@ -39,15 +39,15 @@ EVENT_TYPE = (
 )
 
 GENDER_CHOICES = (
-    ('M', 'MALE'),
-    ('F', 'FEMALE')
+    ('M', 'mężczyzna'),
+    ('F', 'kobieta')
 )
 
 class Profile(models.Model):
     user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
     age = models.PositiveIntegerField(blank=True, null=True)
     weight = models.PositiveIntegerField(blank=True, null=True)
-    region = models.IntegerField(choices=CATEGORY_NAME, blank=True, null=True)
+    region = models.IntegerField(choices=VOIVODESHIP_NAME, blank=True, null=True)
     gender = models.CharField(choices=GENDER_CHOICES, blank=True, null=True, max_length=15)
 
 

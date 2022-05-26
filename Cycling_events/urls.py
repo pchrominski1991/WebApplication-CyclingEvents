@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from Cycling_events_app.views import LoginView, MainView, EventsView, AddEventView, LogoutView, RegisterView
+from Cycling_events_app.views import LoginView, MainView, EventsView, AddEventView, LogoutView, RegisterView, \
+    ProfileView, EditProfileView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,5 +27,6 @@ urlpatterns = [
     path('main_page/', MainView.as_view(), name='main'),
     path('events/', EventsView.as_view(), name='events'),
     path('add_event/', AddEventView.as_view(), name='add-events'),
-
+    path('profile/', ProfileView.as_view(), name='profile'),
+    path('edit_profile/', EditProfileView.as_view(), name='edit-profile'),
 ]

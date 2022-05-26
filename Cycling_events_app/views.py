@@ -2,8 +2,8 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, get_user_model, logout
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import UserForm, AddEventForm, RegisterForm
-from .models import Event, Category, Region
+from .forms import UserForm, AddEventForm, RegisterForm, UserDetailsForm, ProfileDetailsForm
+from .models import Event, Category, Region, Profile
 from django.contrib.auth.forms import UserCreationForm
 
 
@@ -47,6 +47,7 @@ class LogoutView(View):
 class MainView(View):
     def get(self, request):
         return render(request=request, template_name='main_page.html')
+
 
 class EventsView(View):
     def get(self, request):
@@ -105,5 +106,38 @@ class RegisterView(View):
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('main')
-        return render(request, 'register.html', {'form': form})
+            messages.success(request, f'Your account has been created. You can log in now!')
+            return redirect('login')
+
+
+class ProfileView(View):
+    def get(self, request):
+        user = request.user
+        profiles = Profile.objects.get(user_id=user.id)
+        return render(request=request, template_name='profile.html',context={
+            "profiles": profiles
+        })
+
+
+class EditProfileView(View):
+    def get(self, request):
+        user_form = UserDetailsForm(instance=request.user)
+        profile_form = ProfileDetailsForm(instance=request.user.profile)
+        return render(request, 'edit_profile.html', {
+            'user_form': user_form,
+            'profile_form': profile_form
+        })
+
+    def post(self, request):
+        user_form = UserDetailsForm(request.POST, instance=request.user)
+        profile_form = ProfileDetailsForm(request.POST, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect('profile')
+        else:
+            profile_form = ProfileDetailsForm(instance=request.user.profile)
+        return render(request, 'profile.html', {
+            'user_form': user_form,
+            'profile_form': profile_form
+        })
