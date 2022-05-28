@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, get_user_model, logout
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import UserForm, AddEventForm, RegisterForm, UserDetailsForm, ProfileDetailsForm
+from .forms import UserForm, AddEventForm, RegisterForm, UserDetailsForm, ProfileDetailsForm, EditEventForm
 from .models import Event, Category, Region, Profile
 from django.contrib.auth.forms import UserCreationForm
 
@@ -141,3 +141,36 @@ class EditProfileView(View):
             'user_form': user_form,
             'profile_form': profile_form
         })
+
+
+class EventView(View):
+    def get(self, request, id):
+        event = Event.objects.get(id=id)
+        user = User.objects.get(id=event.event_creator_id)
+        return render(request=request, template_name='event_details.html', context={
+            "event": event,
+            "user": user
+        })
+
+
+class EditEventView(View):
+    def get(self, request, id):
+        event = Event.objects.get(id=id)
+        form = EditEventForm(instance=event)
+        return render(request, 'edit_event.html', {"form": form})
+
+    def post(self, request, id):
+        event = Event.objects.get(id=id)
+        form = EditEventForm(request.POST, instance=event)
+        if form.is_valid():
+            form.save()
+            return redirect(f'/event_details/{id}/')
+        return render(request, 'edit_event.html', {"form": form})
+
+
+def event_signup(request, id):
+    if request.method == "GET":
+        user = request.user
+        event = Event.objects.get(id=id)
+        event.event_participant.add(user.profile)
+        return render(request, "admin_page.html")

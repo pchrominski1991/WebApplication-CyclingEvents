@@ -1,9 +1,10 @@
 from django import forms
+from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from django.forms import PasswordInput
+from django.forms import PasswordInput, DateField
 import datetime
-from Cycling_events_app.models import EVENT_TYPE, VOIVODESHIP_NAME, CATEGORY_NAME, Profile
+from Cycling_events_app.models import EVENT_TYPE, VOIVODESHIP_NAME, CATEGORY_NAME, Profile, Event
 
 User = get_user_model()
 
@@ -87,6 +88,30 @@ class ProfileDetailsForm(forms.ModelForm):
             'weight': 'Waga',
             'region': 'Województwo',
         }
+
+
+class EditEventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = ('event_name', 'event_type', 'limit', 'distance', 'route_description', 'date', 'start', 'finish',
+                  'region_name', 'categories')
+
+        labels = { 'event_name':'Nazwa',
+                   'event_type':'Typ',
+                   'limit':'Limit miejsc',
+                   'distance':'Długość trasy',
+                   'route_description':'Opis Trasy',
+                   'date':'Data wydarzenia',
+                   'start':'Miejsce startu',
+                   'finish':'Miejsce zakończenia',
+                   'region_name':'Województwo',
+                   'categories':'Typ roweru',
+        }
+
+        widgets = { 'date': forms.SelectDateWidget()}
+
+
+
 
 
 
