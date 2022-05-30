@@ -111,6 +111,12 @@ class EditEventForm(forms.ModelForm):
         widgets = { 'date': forms.SelectDateWidget()}
 
 
+class FilterEventsForm(forms.Form):
+    region_name = forms.ChoiceField(choices=VOIVODESHIP_NAME, label="Region")
+    event_type = forms.ChoiceField(choices=EVENT_TYPE, label="Typ wydarzenia")
+    categories = forms.ChoiceField(choices=CATEGORY_NAME, label="Typ roweru")
+
+
 
 
 

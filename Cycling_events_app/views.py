@@ -2,9 +2,10 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, get_user_model, logout
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import UserForm, AddEventForm, RegisterForm, UserDetailsForm, ProfileDetailsForm, EditEventForm
+from .forms import UserForm, AddEventForm, RegisterForm, UserDetailsForm, ProfileDetailsForm, EditEventForm, \
+    FilterEventsForm
 from .models import Event, Category, Region, Profile
-from django.contrib.auth.forms import UserCreationForm
+
 
 
 User = get_user_model()
@@ -51,10 +52,29 @@ class MainView(View):
 
 class EventsView(View):
     def get(self, request):
+        form = FilterEventsForm()
         events = Event.objects.order_by('event_name')
         return render(request=request, template_name='events.html',context={
-            "events": events
+            "events": events,
+            "form": form,
         })
+
+    def post(self, request):
+        form = FilterEventsForm(request.POST)
+        if form.is_valid():
+            event_type = form.cleaned_data['event_type']
+            region_name = form.cleaned_data['region_name']
+            categories = form.cleaned_data['categories']
+            if (event_type and region_name and categories) != "":
+                events = Event.objects.filter(event_type=event_type).filter(region_name=region_name).filter(categories=categories)
+            elif categories == "":
+                events = Event.objects.filter(event_type=event_type).filter(region_name=region_name)
+            elif event_type != "":
+                events = Event.objects.filter(event_type=event_type)
+            return render(request, 'events.html', {"form": form,
+                                                   "events": events,
+                                                   })
+
 
 
 class AddEventView(View):
@@ -168,9 +188,38 @@ class EditEventView(View):
         return render(request, 'edit_event.html', {"form": form})
 
 
-def event_signup(request, id):
-    if request.method == "GET":
+class EventSignup(View):
+    def get(self, request, id):
         user = request.user
         event = Event.objects.get(id=id)
         event.event_participant.add(user.profile)
-        return render(request, "admin_page.html")
+        return render(request, "events.html")
+
+
+class MyEventsView(View):
+    def get(self, request):
+        user = request.user
+        profile = Profile.objects.get(user_id=user.id)
+        event_creator = Event.objects.filter(event_creator_id=user.id).order_by('event_name')
+        my_event = Event.objects.filter(event_participant=profile).order_by('event_name')
+        return render(request=request, template_name='my_events.html', context={"event_creator": event_creator,
+                                                                                "my_event": my_event,
+                                                                                })
+
+
+class EventSignupView(View):
+    def get(self, request, id):
+        user = request.user
+        event = Event.objects.get(id=id)
+        event.event_participant.add(user.profile)
+        return render(request, "my_events.html")
+
+
+class EventResignationView(View):
+    def get(self, request, id):
+        user = request.user
+        event = Event.objects.get(id=id)
+        event.event_participant.remove(user.profile)
+        return render(request, "my_events.html")
+
+
