@@ -9,11 +9,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
 from .forms import UserForm, AddEventForm, RegisterForm, UserDetailsForm, ProfileDetailsForm, EditEventForm, \
-    FilterEventsForm
-from .models import Event, Category, Region, Profile
-from django.utils.translation import gettext as _
-
-
+    FilterEventsForm, AddBikeForm
+from .models import Event, Category, Region, Profile, Bike
 
 User = get_user_model()
 
@@ -137,8 +134,10 @@ class ProfileView(View):
     def get(self, request):
         user = request.user
         profiles = Profile.objects.get(user_id=user.id)
+        bike = profiles.bike
         return render(request=request, template_name='profile.html',context={
-            "profiles": profiles
+            "profiles": profiles,
+            "bike": bike
         })
 
 
@@ -193,6 +192,7 @@ class EditEventView(LoginRequiredMixin,View):
         event = Event.objects.get(id=id)
         form = EditEventForm(request.POST, instance=event)
         if form.is_valid():
+            form.save()
             return redirect(f'/event_details/{id}/')
         return render(request, 'edit_event.html', {"form": form})
 
@@ -212,9 +212,13 @@ class MyEventsView(LoginRequiredMixin, View):
 
 class EventSignupView(LoginRequiredMixin, View):
     def get(self, request, id):
-        user = request.user
         event = Event.objects.get(id=id)
-        event.event_participant.add(request.user.profile)
+        participants = event.event_participant.all()
+        for participant in participants:
+            if request.user.id == participant.id:
+                pass
+            else:
+                event.event_participant.add(request.user.profile)
         return redirect("my-events")
 
 
@@ -231,3 +235,54 @@ class ParticipantsView(View):
         event = Event.objects.get(id=id)
         participants = event.event_participant.all()
         return render(request, "participants.html", context={"participants": participants})
+
+
+class AddBikeView(View):
+    def get(self, request):
+        form = AddBikeForm()
+        return render(request, 'add_bike.html', {"form": form})
+
+    def post(self, request):
+        form = AddBikeForm(request.POST)
+        if form.is_valid():
+            brand = form.cleaned_data['brand']
+            model = form.cleaned_data['model']
+            bike_type = form.cleaned_data['bike_type']
+            weight = form.cleaned_data['weight']
+            image = form.cleaned_data['image']
+            bike = Bike.objects.create(brand=brand,
+                                         model=model,
+                                         bike_type=bike_type,
+                                         weight=weight,
+                                         image=image,
+                                         )
+            bike.save()
+            user = request.user
+            user.profile.bike = bike
+            user.save()
+            return redirect('/profile/')
+        return render(request, 'add_bike.html', {"form": form})
+
+
+class BikeDetailsView(View):
+    def get(self, request, id):
+        bike = Bike.objects.get(id=id)
+        return render(request, "bike.html", context={"bike": bike})
+
+
+class EditBikeView(View):
+    def get(self, request, id):
+        bike = Bike.objects.get(id=id)
+        form = AddBikeForm(instance=bike)
+        return render(request, 'edit_event.html', {"form": form})
+
+
+    def post(self, request, id):
+        bike = Bike.objects.get(id=id)
+        form = AddBikeForm(request.POST, instance=bike)
+        if form.is_valid():
+            form.save()
+            return redirect(f'/bike_details/{id}/')
+        return render(request, 'edit_bike.html', {"form": form})
+
+

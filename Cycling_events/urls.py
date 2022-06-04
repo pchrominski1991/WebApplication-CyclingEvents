@@ -18,7 +18,7 @@ from django.urls import path
 
 from Cycling_events_app.views import LoginView, MainView, EventsView, AddEventView, LogoutView, RegisterView, \
     ProfileView, EditProfileView, EventView, EditEventView, MyEventsView, EventResignationView, \
-    EventSignupView, ParticipantsView
+    EventSignupView, ParticipantsView, AddBikeView, BikeDetailsView, EditBikeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,4 +37,7 @@ urlpatterns = [
     path('my_events', MyEventsView.as_view(), name='my-events'),
     path('event_resignation/<str:id>/', EventResignationView.as_view(), name='event-signup'),
     path('participants/<str:id>/', ParticipantsView.as_view(), name='participants'),
+    path('add_bike/', AddBikeView.as_view(), name='add-bike'),
+    path('bike_details/<str:id>/', BikeDetailsView.as_view(), name='bike_details'),
+    path('edit_bike/<str:id>/', EditBikeView.as_view(), name='bike_details'),
 ]

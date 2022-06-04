@@ -1,10 +1,9 @@
 from django import forms
-from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from django.forms import PasswordInput, DateField
+from django.forms import PasswordInput
 import datetime
-from Cycling_events_app.models import EVENT_TYPE, VOIVODESHIP_NAME, CATEGORY_NAME, Profile, Event
+from Cycling_events_app.models import EVENT_TYPE, VOIVODESHIP_NAME, CATEGORY_NAME, Profile, Event, Bike
 
 User = get_user_model()
 
@@ -115,6 +114,19 @@ class FilterEventsForm(forms.Form):
     region_name = forms.ChoiceField(choices=VOIVODESHIP_NAME, label="Region")
     event_type = forms.ChoiceField(choices=EVENT_TYPE, label="Typ wydarzenia")
     categories = forms.ChoiceField(choices=CATEGORY_NAME, label="Typ roweru")
+
+
+class AddBikeForm(forms.ModelForm):
+    class Meta:
+        model = Bike
+        fields = ('brand', 'model', 'bike_type', 'weight', 'image')
+        labels = {
+            'brand': 'Marka',
+            'model': 'Model',
+            'bike_type': 'Typ roweru',
+            'weight': 'Waga',
+            'image': 'Dodaj zdjęcie'
+        }
 
 
 

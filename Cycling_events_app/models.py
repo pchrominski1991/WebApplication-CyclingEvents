@@ -43,12 +43,22 @@ GENDER_CHOICES = (
     ('F', 'kobieta')
 )
 
+
+class Bike(models.Model):
+    brand = models.CharField('Marka roweru:', max_length=64)
+    model = models.CharField('Model roweru:', max_length=64)
+    bike_type = models.IntegerField(choices=CATEGORY_NAME)
+    weight = models.FloatField()
+    image = models.ImageField(upload_to='static/', blank=True, null=True)
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
     age = models.PositiveIntegerField(blank=True, null=True)
     weight = models.PositiveIntegerField(blank=True, null=True)
     region = models.IntegerField(choices=VOIVODESHIP_NAME, blank=True, null=True)
     gender = models.CharField(choices=GENDER_CHOICES, blank=True, null=True, max_length=15)
+    bike = models.ForeignKey(Bike, on_delete=models.CASCADE, null=True)
 
 
     @receiver(post_save, sender=User)
@@ -95,8 +105,4 @@ class Event(models.Model):
 
 
 
-class Bike(models.Model):
-    brand = models.CharField('Marka roweru:', max_length=64)
-    model = models.CharField('Model roweru:', max_length=64)
-    type = models.IntegerField(choices=CATEGORY_NAME)
-    weight = models.FloatField()
+
