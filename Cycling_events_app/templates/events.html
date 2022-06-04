@@ -4,11 +4,10 @@
     {% csrf_token %}
     {{ form.as_table }}
     <input type="submit" value="Wyszukaj">
-</form>
     <h3> Lista wydarzeń:</h3>
     <ul>
     {% for event in events %}
-        <li><a href="/event_details/{{ event.id }}">{{ event.event_name }}</a>; Region: {{ event.region_name }}; Typ wydarzenia: {{ event.get_event_type_display }}&nbsp &nbsp<a href="/edit_event/{{ event.id }}">  modyfikuj</a>&nbsp &nbsp<a class="btn btn-primary" href="/event_signup/{{ event.id }}">Zapisz się</a>
+        <li><a href="/event_details/{{ event.id }}">{{ event.event_name }}</a>; Region: {{ event.region_name }}; Typ wydarzenia: {{ event.get_event_type_display }}&nbsp &nbsp<a href="/edit_event/{{ event.id }}">modyfikuj</a>&nbsp &nbsp<a class="btn btn-primary" href="/event_signup/{{ event.id }}">Zapisz się</a></li>
     {% endfor %}
     </ul>
     <br/> <br/>

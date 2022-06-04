@@ -7,7 +7,6 @@ from django.dispatch import receiver
 User = get_user_model()
 
 CATEGORY_NAME = (
-    (0, ""),
     (1, "rower szosowy"),
     (2, "MTB"),
     (3, "GRAVEL"),
@@ -15,7 +14,6 @@ CATEGORY_NAME = (
 )
 
 VOIVODESHIP_NAME = (
-    (0, ""),
     (1, "dolnośląskie"),
     (2, "kujawsko-pomorskie"),
     (3, "lubelskie"),
@@ -35,7 +33,6 @@ VOIVODESHIP_NAME = (
 )
 
 EVENT_TYPE = (
-    (0, ""),
     (1, "wyścig"),
     (2, "trening"),
     (3, "coffee ride"),

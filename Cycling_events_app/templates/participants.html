@@ -1,0 +1,10 @@
+{% extends 'base_event.html' %}
+
+{% block content %}
+<h3> Lista uczestników:</h3>
+<ul>
+    {% for participant in participants %}
+        <li>{{participant.user.username}}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,10 +1,17 @@
+from collections import Counter
+from itertools import count
+
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, get_user_model, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
 from .forms import UserForm, AddEventForm, RegisterForm, UserDetailsForm, ProfileDetailsForm, EditEventForm, \
     FilterEventsForm
 from .models import Event, Category, Region, Profile
+from django.utils.translation import gettext as _
 
 
 
@@ -28,6 +35,7 @@ class LoginView(View):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+
                 return redirect('/main_page/')
             else:
                 form.add_error(None, 'Niepoprawny login lub hasło!')
@@ -42,6 +50,7 @@ class LoginView(View):
 class LogoutView(View):
     def get(self, request, *args, **kwargs):
         logout(request)
+        messages.info(request, "Wylogowano się poprawnie.")
         return redirect('login')
 
 
@@ -54,7 +63,7 @@ class EventsView(View):
     def get(self, request):
         form = FilterEventsForm()
         events = Event.objects.order_by('event_name')
-        return render(request=request, template_name='events.html',context={
+        return render(request=request, template_name='events.html', context={
             "events": events,
             "form": form,
         })
@@ -65,19 +74,13 @@ class EventsView(View):
             event_type = form.cleaned_data['event_type']
             region_name = form.cleaned_data['region_name']
             categories = form.cleaned_data['categories']
-            if (event_type and region_name and categories) != "":
-                events = Event.objects.filter(event_type=event_type).filter(region_name=region_name).filter(categories=categories)
-            elif categories == "":
-                events = Event.objects.filter(event_type=event_type).filter(region_name=region_name)
-            elif event_type != "":
-                events = Event.objects.filter(event_type=event_type)
+            events = Event.objects.filter(region_name=region_name).filter(categories=categories).filter(event_type=event_type)
             return render(request, 'events.html', {"form": form,
                                                    "events": events,
                                                    })
 
 
-
-class AddEventView(View):
+class AddEventView(LoginRequiredMixin, View):
     def get(self, request):
         form = AddEventForm()
         return render(request, 'add_event.html', {"form": form})
@@ -154,7 +157,8 @@ class EditProfileView(View):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            return redirect('profile')
+            messages.success(self.request, 'zmieniono dane użytkownika')
+            return HttpResponseRedirect(self.request.path_info)
         else:
             profile_form = ProfileDetailsForm(instance=request.user.profile)
         return render(request, 'profile.html', {
@@ -167,36 +171,35 @@ class EventView(View):
     def get(self, request, id):
         event = Event.objects.get(id=id)
         user = User.objects.get(id=event.event_creator_id)
+        participants = event.event_participant.count()
+        avb = int(event.limit) - int(participants)
         return render(request=request, template_name='event_details.html', context={
             "event": event,
-            "user": user
+            "user": user,
+            "avb": avb,
         })
 
 
-class EditEventView(View):
+class EditEventView(LoginRequiredMixin,View):
     def get(self, request, id):
         event = Event.objects.get(id=id)
-        form = EditEventForm(instance=event)
-        return render(request, 'edit_event.html', {"form": form})
+        if request.user.id == event.event_creator_id:
+            form = EditEventForm(instance=event)
+            return render(request, 'edit_event.html', {"form": form})
+        else:
+            return redirect(f'/event_details/{id}/')
 
     def post(self, request, id):
         event = Event.objects.get(id=id)
         form = EditEventForm(request.POST, instance=event)
         if form.is_valid():
-            form.save()
             return redirect(f'/event_details/{id}/')
         return render(request, 'edit_event.html', {"form": form})
 
 
-class EventSignup(View):
-    def get(self, request, id):
-        user = request.user
-        event = Event.objects.get(id=id)
-        event.event_participant.add(user.profile)
-        return render(request, "events.html")
 
 
-class MyEventsView(View):
+class MyEventsView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         profile = Profile.objects.get(user_id=user.id)
@@ -207,12 +210,12 @@ class MyEventsView(View):
                                                                                 })
 
 
-class EventSignupView(View):
+class EventSignupView(LoginRequiredMixin, View):
     def get(self, request, id):
         user = request.user
         event = Event.objects.get(id=id)
-        event.event_participant.add(user.profile)
-        return render(request, "my_events.html")
+        event.event_participant.add(request.user.profile)
+        return redirect("my-events")
 
 
 class EventResignationView(View):
@@ -220,6 +223,11 @@ class EventResignationView(View):
         user = request.user
         event = Event.objects.get(id=id)
         event.event_participant.remove(user.profile)
-        return render(request, "my_events.html")
+        return redirect("my-events")
 
 
+class ParticipantsView(View):
+    def get(self, request, id):
+        event = Event.objects.get(id=id)
+        participants = event.event_participant.all()
+        return render(request, "participants.html", context={"participants": participants})

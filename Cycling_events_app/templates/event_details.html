@@ -4,14 +4,15 @@
    <h3> Szczegóły Wydarzenia:</h3>
    <li>Nazwa:{{ event.event_name}}</li>
    <li>Typ: {{ event.get_event_type_display }}</li>
-   <li>Limit miejsc: {{ event.limit }}</li>
    <li>Długość trasy: {{ event.distance}} km</li>
    <li>Data wydarzenia: {{ event.date|date:"j E o" }}</li>
    <li>Miejsce startu: {{ event.start }}</li>
    <li>Miejsce zakończenia: {{ event.finish }}</li>
    <li>Województwo: {{ event.region_name }}</li>
    <li>Typ roweru: {{ event.categories }}</li>
-   <li>Uczestnicy: {{ event.event_participant }}</li>
+   <li>Limit miejsc: {{ event.limit }}</li>
+   <li>Ilość wolnych miejsc: {{ avb }}</li>
+   <li>Uczestnicy: <a href="/participants/{{ event.id }}">  Przejdź do listy uczestników</a></li>
    <li>Twórca wydarzenia: {{ user.username}}</li>
 </br>
 </br>
