@@ -1,9 +1,6 @@
-from collections import Counter
-from itertools import count
 
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, get_user_model, logout
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -152,7 +149,7 @@ class EditProfileView(View):
 
     def post(self, request):
         user_form = UserDetailsForm(request.POST, instance=request.user)
-        profile_form = ProfileDetailsForm(request.POST, instance=request.user.profile)
+        profile_form = ProfileDetailsForm(request.POST or None, request.FILES or None, instance=request.user.profile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
@@ -213,12 +210,7 @@ class MyEventsView(LoginRequiredMixin, View):
 class EventSignupView(LoginRequiredMixin, View):
     def get(self, request, id):
         event = Event.objects.get(id=id)
-        participants = event.event_participant.all()
-        for participant in participants:
-            if request.user.id == participant.id:
-                pass
-            else:
-                event.event_participant.add(request.user.profile)
+        event.event_participant.add(request.user.profile)
         return redirect("my-events")
 
 
@@ -243,7 +235,7 @@ class AddBikeView(View):
         return render(request, 'add_bike.html', {"form": form})
 
     def post(self, request):
-        form = AddBikeForm(request.POST)
+        form = AddBikeForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             brand = form.cleaned_data['brand']
             model = form.cleaned_data['model']
@@ -274,15 +266,16 @@ class EditBikeView(View):
     def get(self, request, id):
         bike = Bike.objects.get(id=id)
         form = AddBikeForm(instance=bike)
-        return render(request, 'edit_event.html', {"form": form})
+        return render(request, 'add_bike.html', {"form": form})
 
 
     def post(self, request, id):
         bike = Bike.objects.get(id=id)
-        form = AddBikeForm(request.POST, instance=bike)
+        form = AddBikeForm(request.POST or None, request.FILES or None, instance=bike)
         if form.is_valid():
             form.save()
+            bike.save()
             return redirect(f'/bike_details/{id}/')
-        return render(request, 'edit_bike.html', {"form": form})
+        return render(request, 'add_bike.html', {"form": form})
 
 

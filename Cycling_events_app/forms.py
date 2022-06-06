@@ -80,12 +80,13 @@ class UserDetailsForm(forms.ModelForm):
 class ProfileDetailsForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('gender', 'age', 'weight', 'region')
+        fields = ('gender', 'age', 'weight', 'region', 'image')
         labels = {
             'gender': 'Płeć',
             'age': 'Wiek',
             'weight': 'Waga',
             'region': 'Województwo',
+            'image': 'Dodaj zdjęcie',
         }
 
 

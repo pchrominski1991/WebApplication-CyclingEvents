@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from Cycling_events_app.views import LoginView, MainView, EventsView, AddEventView, LogoutView, RegisterView, \
     ProfileView, EditProfileView, EventView, EditEventView, MyEventsView, EventResignationView, \
@@ -41,3 +43,5 @@ urlpatterns = [
     path('bike_details/<str:id>/', BikeDetailsView.as_view(), name='bike_details'),
     path('edit_bike/<str:id>/', EditBikeView.as_view(), name='bike_details'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

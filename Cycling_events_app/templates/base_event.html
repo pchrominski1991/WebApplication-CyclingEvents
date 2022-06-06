@@ -8,6 +8,10 @@
                 <a href="{% url 'register' %}">Rejestracja</a>
             {% else %}
                 <h4>Witaj {{ user.username }}!</h4>
+                 {%if user.profile.image %}
+                <img src="{{ user.profile.image.url }}" width="150">
+                 {% endif %}
+                 </br>
                 <a href="{% url 'logout' %}">Wyloguj</a> </br>
                 <a href="{%url 'profile' %}">Dane użytkownika</a>
             {% endif %}

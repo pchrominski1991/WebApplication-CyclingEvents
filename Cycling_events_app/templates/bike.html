@@ -2,11 +2,14 @@
 
 {% block content %}
    <h3> Dane roweru:</h3>
-   <li>Marka:{{ bike.brand}}</li>
+   <li>Marka: {{ bike.brand}}</li>
    <li>Model: {{ bike.model }}</li>
    <li>Typ: {{ bike.get_bike_type_display }}</li>
    <li>Waga: {{ bike.weight }} kg</li>
-   <img src="{{ image.model_pic.url }}">
+   <li>Zdjęcie:</li>
+   {%if bike.image %}
+   <img src="{{ bike.image.url }}" width="500">
+   {% endif %}
 </br>
 </br>
    <a href="/edit_bike/{{ bike.id }}">  Edytuj dane</a>

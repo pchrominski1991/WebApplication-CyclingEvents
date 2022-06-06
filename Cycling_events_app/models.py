@@ -49,7 +49,7 @@ class Bike(models.Model):
     model = models.CharField('Model roweru:', max_length=64)
     bike_type = models.IntegerField(choices=CATEGORY_NAME)
     weight = models.FloatField()
-    image = models.ImageField(upload_to='static/', blank=True, null=True)
+    image = models.ImageField(upload_to='files/images', blank=True, null=True)
 
 
 class Profile(models.Model):
@@ -59,6 +59,7 @@ class Profile(models.Model):
     region = models.IntegerField(choices=VOIVODESHIP_NAME, blank=True, null=True)
     gender = models.CharField(choices=GENDER_CHOICES, blank=True, null=True, max_length=15)
     bike = models.ForeignKey(Bike, on_delete=models.CASCADE, null=True)
+    image = models.ImageField(upload_to='files/images', blank=True, null=True)
 
 
     @receiver(post_save, sender=User)
