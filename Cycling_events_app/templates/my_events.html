@@ -8,6 +8,14 @@
     </ul>
     </br>
     </br>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
+    {% endfor %}
+</ul>
+{% endif %}
+</br>
     <h3> Wydarzenia, w których bierzesz udział:</h3>
     <ul>
     {% for event in my_event %}

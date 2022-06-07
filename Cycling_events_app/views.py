@@ -190,6 +190,7 @@ class EditEventView(LoginRequiredMixin,View):
         form = EditEventForm(request.POST, instance=event)
         if form.is_valid():
             form.save()
+            messages.success(request, "Pomyślnie zmieniono informacje o wyścigu")
             return redirect(f'/event_details/{id}/')
         return render(request, 'edit_event.html', {"form": form})
 
@@ -210,8 +211,18 @@ class MyEventsView(LoginRequiredMixin, View):
 class EventSignupView(LoginRequiredMixin, View):
     def get(self, request, id):
         event = Event.objects.get(id=id)
-        event.event_participant.add(request.user.profile)
-        return redirect("my-events")
+        participants = event.event_participant.all()
+        if (int(event.limit) - int(participants.count())) > 0:
+            if request.user.profile not in participants:
+                event.event_participant.add(request.user.profile)
+                messages.success(request, "Pomyślnie zapisałeś się na wydarzenie")
+                return redirect("my-events")
+            else:
+                messages.error(request, "Jesteś już zapisany na to wydarzenie")
+                return redirect('events')
+        else:
+            messages.error(request, "Limit miejsc na to wydarzenie został wyczerpany")
+            return redirect('events')
 
 
 class EventResignationView(View):
