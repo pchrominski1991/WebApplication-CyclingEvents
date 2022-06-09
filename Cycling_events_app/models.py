@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -61,7 +60,6 @@ class Profile(models.Model):
     bike = models.ForeignKey(Bike, on_delete=models.CASCADE, null=True)
     image = models.ImageField(upload_to='files/images', blank=True, null=True)
 
-
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
         if created:
@@ -70,8 +68,6 @@ class Profile(models.Model):
     @receiver(post_save, sender=User)
     def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
-
-
 
 
 class Category(models.Model):
@@ -86,8 +82,6 @@ class Region(models.Model):
 
     def __str__(self):
         return self.get_voivodeship_name_display()
-
-
 
 
 class Event(models.Model):

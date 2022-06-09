@@ -20,11 +20,11 @@ from django.conf.urls.static import static
 
 from Cycling_events_app.views import LoginView, MainView, EventsView, AddEventView, LogoutView, RegisterView, \
     ProfileView, EditProfileView, EventView, EditEventView, MyEventsView, EventResignationView, \
-    EventSignupView, ParticipantsView, AddBikeView, BikeDetailsView, EditBikeView
+    EventSignupView, ParticipantsView, AddBikeView, BikeDetailsView, EditBikeView, ContactView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', LoginView.as_view(), name='login'),
+    path('', LoginView.as_view()),
     path('accounts/login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('register/', RegisterView.as_view(), name='register'),
@@ -42,6 +42,7 @@ urlpatterns = [
     path('add_bike/', AddBikeView.as_view(), name='add-bike'),
     path('bike_details/<str:id>/', BikeDetailsView.as_view(), name='bike_details'),
     path('edit_bike/<str:id>/', EditBikeView.as_view(), name='bike_details'),
+    path('contact/', ContactView.as_view(), name='contact'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

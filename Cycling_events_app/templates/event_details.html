@@ -2,7 +2,7 @@
 
 {% block content %}
    <h3> Szczegóły Wydarzenia:</h3>
-   <li>Nazwa:{{ event.event_name}}</li>
+   <li>Nazwa: {{ event.event_name}}</li>
    <li>Typ: {{ event.get_event_type_display }}</li>
    <li>Długość trasy: {{ event.distance}} km</li>
    <li>Data wydarzenia: {{ event.date|date:"j E o" }}</li>

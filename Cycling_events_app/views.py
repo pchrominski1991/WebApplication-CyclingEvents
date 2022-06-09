@@ -1,4 +1,3 @@
-
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, get_user_model, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -29,7 +28,7 @@ class LoginView(View):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-
+                messages.success(request, f'Pomyślnie zalogowano użytkownika {user.username}')
                 return redirect('/main_page/')
             else:
                 form.add_error(None, 'Niepoprawny login lub hasło!')
@@ -107,6 +106,7 @@ class AddEventView(LoginRequiredMixin, View):
             event.region_name = region
             event.categories = category
             event.save()
+            messages.success(request, f'Dodałeś wydarzenie {event.event_name} do bazy.')
             return redirect('/events/')
         return render(request, 'add_event.html', {"form": form})
 
@@ -123,8 +123,14 @@ class RegisterView(View):
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, f'Your account has been created. You can log in now!')
+            messages.success(request, 'Twoje konto zostało pomyślnie zarejestrowane. Teraz możesz się zalogować!')
             return redirect('login')
+        else:
+            messages.error(request, "Rejestracja nie powiodła się. Wypełnij poprawnie formularz.")
+        context = {
+            'form': form
+        }
+        return render(request, 'register.html', context)
 
 
 class ProfileView(View):
@@ -153,7 +159,7 @@ class EditProfileView(View):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(self.request, 'zmieniono dane użytkownika')
+            messages.success(self.request, 'Zmieniono dane użytkownika.')
             return HttpResponseRedirect(self.request.path_info)
         else:
             profile_form = ProfileDetailsForm(instance=request.user.profile)
@@ -176,7 +182,7 @@ class EventView(View):
         })
 
 
-class EditEventView(LoginRequiredMixin,View):
+class EditEventView(LoginRequiredMixin, View):
     def get(self, request, id):
         event = Event.objects.get(id=id)
         if request.user.id == event.event_creator_id:
@@ -190,11 +196,9 @@ class EditEventView(LoginRequiredMixin,View):
         form = EditEventForm(request.POST, instance=event)
         if form.is_valid():
             form.save()
-            messages.success(request, "Pomyślnie zmieniono informacje o wyścigu")
+            messages.success(request, "Pomyślnie zmieniono informacje o wyścigu.")
             return redirect(f'/event_details/{id}/')
         return render(request, 'edit_event.html', {"form": form})
-
-
 
 
 class MyEventsView(LoginRequiredMixin, View):
@@ -215,7 +219,7 @@ class EventSignupView(LoginRequiredMixin, View):
         if (int(event.limit) - int(participants.count())) > 0:
             if request.user.profile not in participants:
                 event.event_participant.add(request.user.profile)
-                messages.success(request, "Pomyślnie zapisałeś się na wydarzenie")
+                messages.success(request, f'Pomyślnie zapisałeś się na wydarzenie {event.event_name}.')
                 return redirect("my-events")
             else:
                 messages.error(request, "Jesteś już zapisany na to wydarzenie")
@@ -230,6 +234,7 @@ class EventResignationView(View):
         user = request.user
         event = Event.objects.get(id=id)
         event.event_participant.remove(user.profile)
+        messages.success(request, f'Zrezygnowałeś z udziału w wydarzeniu {event.event_name}.')
         return redirect("my-events")
 
 
@@ -263,6 +268,7 @@ class AddBikeView(View):
             user = request.user
             user.profile.bike = bike
             user.save()
+            messages.success(request, 'Dodałeś rower do bazy')
             return redirect('/profile/')
         return render(request, 'add_bike.html', {"form": form})
 
@@ -279,14 +285,19 @@ class EditBikeView(View):
         form = AddBikeForm(instance=bike)
         return render(request, 'add_bike.html', {"form": form})
 
-
     def post(self, request, id):
         bike = Bike.objects.get(id=id)
         form = AddBikeForm(request.POST or None, request.FILES or None, instance=bike)
         if form.is_valid():
             form.save()
             bike.save()
+            messages.success(request, 'Zmieniłeś dane roweru')
             return redirect(f'/bike_details/{id}/')
         return render(request, 'add_bike.html', {"form": form})
+
+
+class ContactView(View):
+    def get(self, request):
+        return render(request, 'contact.html')
 
 

@@ -20,7 +20,6 @@ def only_positive_distance(value):
     return value
 
 
-
 class UserForm(forms.Form):
     username = forms.CharField(label='login')
     password = forms.CharField(label='hasło', widget=PasswordInput)
@@ -48,7 +47,7 @@ class AddEventForm(forms.Form):
 class RegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=101)
     last_name = forms.CharField(max_length=101)
-    email = forms.EmailField()
+    email = forms.EmailField(max_length=128)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -62,7 +61,6 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'password1', 'password2', 'first_name', 'last_name', 'email']
-
 
 
 class UserDetailsForm(forms.ModelForm):
