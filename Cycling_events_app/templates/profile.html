@@ -8,9 +8,11 @@
         Płeć: {{ user.profile.get_gender_display }} </br>
         Wiek: {{ user.profile.age }} lat </br>
         Waga: {{ user.profile.weight }} kg </br>
-        Województwo: {{ user.profile.get_region_display}}
+        Województwo: {{ user.profile.get_region_display}}</br>
+        Rower: <a href="/bike_details/{{ bike.id }}">{{ bike.brand }} {{bike.model}}</a>
     {% endif %}
     </ul>
     <br/> <br/>
-    <h4><a href="/edit_profile/">Edytuj dane użytkownika</a></h4>
+    <h4><a href="/edit_profile/">Edytuj dane użytkownika</a> &nbsp &nbsp &nbsp &nbsp
+        <a href="/add_bike/">+ Dodaj rower</a></h4>
 {% endblock %}

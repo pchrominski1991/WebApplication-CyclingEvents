@@ -15,13 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from Cycling_events_app.views import LoginView, MainView, EventsView, AddEventView, LogoutView, RegisterView, \
-    ProfileView, EditProfileView
+    ProfileView, EditProfileView, EventView, EditEventView, MyEventsView, EventResignationView, \
+    EventSignupView, ParticipantsView, AddBikeView, BikeDetailsView, EditBikeView, ContactView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', LoginView.as_view(), name='login'),
+    path('', LoginView.as_view()),
+    path('accounts/login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('register/', RegisterView.as_view(), name='register'),
     path('main_page/', MainView.as_view(), name='main'),
@@ -29,4 +33,16 @@ urlpatterns = [
     path('add_event/', AddEventView.as_view(), name='add-events'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('edit_profile/', EditProfileView.as_view(), name='edit-profile'),
+    path('event_details/<str:id>/', EventView.as_view(), name='event-details'),
+    path('event_signup/<str:id>/', EventSignupView.as_view(), name='event-signup'),
+    path('edit_event/<str:id>/', EditEventView.as_view(), name='edit-event'),
+    path('my_events', MyEventsView.as_view(), name='my-events'),
+    path('event_resignation/<str:id>/', EventResignationView.as_view(), name='event-signup'),
+    path('participants/<str:id>/', ParticipantsView.as_view(), name='participants'),
+    path('add_bike/', AddBikeView.as_view(), name='add-bike'),
+    path('bike_details/<str:id>/', BikeDetailsView.as_view(), name='bike_details'),
+    path('edit_bike/<str:id>/', EditBikeView.as_view(), name='bike_details'),
+    path('contact/', ContactView.as_view(), name='contact'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

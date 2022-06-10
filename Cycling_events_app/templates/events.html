@@ -1,11 +1,22 @@
 {% extends 'base_event.html' %}
 {% block content %}
-    <h3> Wydarzenia spełniające podane kryteria:</h3>
+
+
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_table }}
+    <input type="submit" value="Wyszukaj">
+    <h3> Lista wydarzeń:</h3>
     <ul>
     {% for event in events %}
-        <li>{{ event.event_name}} {{ event.categories}} {{event.region_name}}</li>
+        <li><a href="/event_details/{{ event.id }}">{{ event.event_name }}</a>; Region: {{ event.region_name }}; Typ wydarzenia: {{ event.get_event_type_display }}&nbsp &nbsp <a class="btn btn-primary" href="/event_signup/{{ event.id }}">Zapisz się</a></li>
     {% endfor %}
     </ul>
+</br>
+
+
     <br/> <br/>
     <h4><a href="/add_event/">+ dodaj wydarzenie</a></h4>
 {% endblock %}
+

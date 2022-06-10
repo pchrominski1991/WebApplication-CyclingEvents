@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -43,13 +42,23 @@ GENDER_CHOICES = (
     ('F', 'kobieta')
 )
 
+
+class Bike(models.Model):
+    brand = models.CharField('Marka roweru:', max_length=64)
+    model = models.CharField('Model roweru:', max_length=64)
+    bike_type = models.IntegerField(choices=CATEGORY_NAME)
+    weight = models.FloatField()
+    image = models.ImageField(upload_to='files/images', blank=True, null=True)
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
     age = models.PositiveIntegerField(blank=True, null=True)
     weight = models.PositiveIntegerField(blank=True, null=True)
     region = models.IntegerField(choices=VOIVODESHIP_NAME, blank=True, null=True)
     gender = models.CharField(choices=GENDER_CHOICES, blank=True, null=True, max_length=15)
-
+    bike = models.ForeignKey(Bike, on_delete=models.CASCADE, null=True)
+    image = models.ImageField(upload_to='files/images', blank=True, null=True)
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
@@ -59,8 +68,6 @@ class Profile(models.Model):
     @receiver(post_save, sender=User)
     def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
-
-
 
 
 class Category(models.Model):
@@ -77,8 +84,6 @@ class Region(models.Model):
         return self.get_voivodeship_name_display()
 
 
-
-
 class Event(models.Model):
     event_name = models.CharField('Nazwa wydarzenia:', max_length=128)
     event_type = models.IntegerField(choices=EVENT_TYPE)
@@ -92,11 +97,3 @@ class Event(models.Model):
     categories = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     event_participant = models.ManyToManyField(Profile)
     event_creator = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
-
-
-
-class Bike(models.Model):
-    brand = models.CharField('Marka roweru:', max_length=64)
-    model = models.CharField('Model roweru:', max_length=64)
-    type = models.IntegerField(choices=CATEGORY_NAME)
-    weight = models.FloatField()

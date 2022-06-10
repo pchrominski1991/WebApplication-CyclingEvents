@@ -3,7 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import PasswordInput
 import datetime
-from Cycling_events_app.models import EVENT_TYPE, VOIVODESHIP_NAME, CATEGORY_NAME, Profile
+from Cycling_events_app.models import EVENT_TYPE, VOIVODESHIP_NAME,\
+    CATEGORY_NAME, Profile, Event, Bike
 
 User = get_user_model()
 
@@ -20,10 +21,10 @@ def only_positive_distance(value):
     return value
 
 
-
 class UserForm(forms.Form):
     username = forms.CharField(label='login')
     password = forms.CharField(label='hasło', widget=PasswordInput)
+
     class Meta:
         model = User
         fields = ('username', 'password')
@@ -48,7 +49,7 @@ class AddEventForm(forms.Form):
 class RegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=101)
     last_name = forms.CharField(max_length=101)
-    email = forms.EmailField()
+    email = forms.EmailField(max_length=128)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -61,8 +62,8 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['username', 'password1', 'password2', 'first_name', 'last_name', 'email']
-
+        fields = ['username', 'password1', 'password2',
+                  'first_name', 'last_name', 'email']
 
 
 class UserDetailsForm(forms.ModelForm):
@@ -80,14 +81,53 @@ class UserDetailsForm(forms.ModelForm):
 class ProfileDetailsForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('gender', 'age', 'weight', 'region')
+        fields = ('gender', 'age', 'weight', 'region', 'image')
         labels = {
             'gender': 'Płeć',
             'age': 'Wiek',
             'weight': 'Waga',
             'region': 'Województwo',
+            'image': 'Dodaj zdjęcie',
         }
 
 
+class EditEventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = ('event_name', 'event_type', 'limit',
+                  'distance', 'route_description',
+                  'date', 'start', 'finish',
+                  'region_name', 'categories')
+
+        labels = {'event_name': 'Nazwa',
+                  'event_type': 'Typ',
+                  'limit': 'Limit miejsc',
+                  'distance': 'Długość trasy',
+                  'route_description': 'Opis Trasy',
+                  'date': 'Data wydarzenia',
+                  'start': 'Miejsce startu',
+                  'finish': 'Miejsce zakończenia',
+                  'region_name': 'Województwo',
+                  'categories': 'Typ roweru',
+                  }
+
+        widgets = {'date': forms.SelectDateWidget()}
 
 
+class FilterEventsForm(forms.Form):
+    region_name = forms.ChoiceField(choices=VOIVODESHIP_NAME, label="Region")
+    event_type = forms.ChoiceField(choices=EVENT_TYPE, label="Typ wydarzenia")
+    categories = forms.ChoiceField(choices=CATEGORY_NAME, label="Typ roweru")
+
+
+class AddBikeForm(forms.ModelForm):
+    class Meta:
+        model = Bike
+        fields = ('brand', 'model', 'bike_type', 'weight', 'image')
+        labels = {
+            'brand': 'Marka',
+            'model': 'Model',
+            'bike_type': 'Typ roweru',
+            'weight': 'Waga',
+            'image': 'Dodaj zdjęcie'
+        }
