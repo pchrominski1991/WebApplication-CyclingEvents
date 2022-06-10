@@ -97,7 +97,3 @@ class Event(models.Model):
     categories = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     event_participant = models.ManyToManyField(Profile)
     event_creator = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
-
-
-
-

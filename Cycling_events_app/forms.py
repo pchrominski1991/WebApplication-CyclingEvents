@@ -3,7 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import PasswordInput
 import datetime
-from Cycling_events_app.models import EVENT_TYPE, VOIVODESHIP_NAME, CATEGORY_NAME, Profile, Event, Bike
+from Cycling_events_app.models import EVENT_TYPE, VOIVODESHIP_NAME,\
+    CATEGORY_NAME, Profile, Event, Bike
 
 User = get_user_model()
 
@@ -23,6 +24,7 @@ def only_positive_distance(value):
 class UserForm(forms.Form):
     username = forms.CharField(label='login')
     password = forms.CharField(label='hasło', widget=PasswordInput)
+
     class Meta:
         model = User
         fields = ('username', 'password')
@@ -60,7 +62,8 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['username', 'password1', 'password2', 'first_name', 'last_name', 'email']
+        fields = ['username', 'password1', 'password2',
+                  'first_name', 'last_name', 'email']
 
 
 class UserDetailsForm(forms.ModelForm):
@@ -91,22 +94,24 @@ class ProfileDetailsForm(forms.ModelForm):
 class EditEventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ('event_name', 'event_type', 'limit', 'distance', 'route_description', 'date', 'start', 'finish',
+        fields = ('event_name', 'event_type', 'limit',
+                  'distance', 'route_description',
+                  'date', 'start', 'finish',
                   'region_name', 'categories')
 
-        labels = { 'event_name':'Nazwa',
-                   'event_type':'Typ',
-                   'limit':'Limit miejsc',
-                   'distance':'Długość trasy',
-                   'route_description':'Opis Trasy',
-                   'date':'Data wydarzenia',
-                   'start':'Miejsce startu',
-                   'finish':'Miejsce zakończenia',
-                   'region_name':'Województwo',
-                   'categories':'Typ roweru',
-        }
+        labels = {'event_name': 'Nazwa',
+                  'event_type': 'Typ',
+                  'limit': 'Limit miejsc',
+                  'distance': 'Długość trasy',
+                  'route_description': 'Opis Trasy',
+                  'date': 'Data wydarzenia',
+                  'start': 'Miejsce startu',
+                  'finish': 'Miejsce zakończenia',
+                  'region_name': 'Województwo',
+                  'categories': 'Typ roweru',
+                  }
 
-        widgets = { 'date': forms.SelectDateWidget()}
+        widgets = {'date': forms.SelectDateWidget()}
 
 
 class FilterEventsForm(forms.Form):
@@ -126,10 +131,3 @@ class AddBikeForm(forms.ModelForm):
             'weight': 'Waga',
             'image': 'Dodaj zdjęcie'
         }
-
-
-
-
-
-
-
