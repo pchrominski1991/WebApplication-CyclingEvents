@@ -37,11 +37,11 @@ urlpatterns = [
     path('event_signup/<str:id>/', EventSignupView.as_view(), name='event-signup'),
     path('edit_event/<str:id>/', EditEventView.as_view(), name='edit-event'),
     path('my_events', MyEventsView.as_view(), name='my-events'),
-    path('event_resignation/<str:id>/', EventResignationView.as_view(), name='event-signup'),
+    path('event_resignation/<str:id>/', EventResignationView.as_view(), name='event-resignation'),
     path('participants/<str:id>/', ParticipantsView.as_view(), name='participants'),
     path('add_bike/', AddBikeView.as_view(), name='add-bike'),
     path('bike_details/<str:id>/', BikeDetailsView.as_view(), name='bike_details'),
-    path('edit_bike/<str:id>/', EditBikeView.as_view(), name='bike_details'),
+    path('edit_bike/<str:id>/', EditBikeView.as_view(), name='edit-bike'),
     path('contact/', ContactView.as_view(), name='contact'),
 ]
 
