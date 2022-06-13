@@ -10,30 +10,35 @@ User = get_user_model()
 
 
 def present_or_future_date(value):
+    """
+    Validation if date is not from the past
+    :param value:
+    :return:Date Validation
+    """
     if value < datetime.date.today():
         raise forms.ValidationError("Nie można podać daty z przeszłości!")
     return value
 
 
 def only_positive_distance(value):
+    """
+    Validation if distance is not negative or  equal to zero
+    :param value:
+    :return:Distance Validation
+    """
     if value <= 0:
         raise forms.ValidationError("Dystans musi być większy od 0")
     return value
 
 
 class UserForm(forms.Form):
+    """Form to log in user"""
     username = forms.CharField(label='login')
     password = forms.CharField(label='hasło', widget=PasswordInput)
 
-    class Meta:
-        model = User
-        fields = ('username', 'password')
-        labels = {
-            'username': 'login',
-        }
-
 
 class AddEventForm(forms.Form):
+    """Form to add event."""
     event_name = forms.CharField(max_length=128, label="Podaj nazwę wydarzenia")
     event_type = forms.ChoiceField(choices=EVENT_TYPE, label="Podaj typ wydarzenia")
     limit = forms.IntegerField(label="Podaj limit miejsc")
@@ -47,6 +52,7 @@ class AddEventForm(forms.Form):
 
 
 class RegisterForm(UserCreationForm):
+    """Form to register user"""
     first_name = forms.CharField(max_length=101)
     last_name = forms.CharField(max_length=101)
     email = forms.EmailField(max_length=128)
@@ -67,6 +73,8 @@ class RegisterForm(UserCreationForm):
 
 
 class UserDetailsForm(forms.ModelForm):
+    """Form to update user data"""
+
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
@@ -79,6 +87,8 @@ class UserDetailsForm(forms.ModelForm):
 
 
 class ProfileDetailsForm(forms.ModelForm):
+    """Form to update profile data"""
+
     class Meta:
         model = Profile
         fields = ('gender', 'age', 'weight', 'region', 'image')
@@ -92,6 +102,8 @@ class ProfileDetailsForm(forms.ModelForm):
 
 
 class EditEventForm(forms.ModelForm):
+    """Form to update event."""
+
     class Meta:
         model = Event
         fields = ('event_name', 'event_type', 'limit',
@@ -115,12 +127,15 @@ class EditEventForm(forms.ModelForm):
 
 
 class FilterEventsForm(forms.Form):
+    """Form to filter event."""
     region_name = forms.ChoiceField(choices=VOIVODESHIP_NAME, label="Region")
     event_type = forms.ChoiceField(choices=EVENT_TYPE, label="Typ wydarzenia")
     categories = forms.ChoiceField(choices=CATEGORY_NAME, label="Typ roweru")
 
 
 class AddBikeForm(forms.ModelForm):
+    """Form to add or update bike."""
+
     class Meta:
         model = Bike
         fields = ('brand', 'model', 'bike_type', 'weight', 'image')

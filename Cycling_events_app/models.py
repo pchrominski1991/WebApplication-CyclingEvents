@@ -44,6 +44,9 @@ GENDER_CHOICES = (
 
 
 class Bike(models.Model):
+    """
+    Stores a single Bike model.
+    """
     brand = models.CharField('Marka roweru:', max_length=64)
     model = models.CharField('Model roweru:', max_length=64)
     bike_type = models.IntegerField(choices=CATEGORY_NAME)
@@ -52,6 +55,9 @@ class Bike(models.Model):
 
 
 class Profile(models.Model):
+    """
+    Extend :model:`auth.User`.
+    """
     user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
     age = models.PositiveIntegerField(blank=True, null=True)
     weight = models.PositiveIntegerField(blank=True, null=True)
@@ -62,29 +68,53 @@ class Profile(models.Model):
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
+        """
+        Create user profile after create user
+        """
         if created:
             Profile.objects.create(user=instance)
 
     @receiver(post_save, sender=User)
     def save_user_profile(sender, instance, **kwargs):
+        """
+        Save profile instance
+        """
         instance.profile.save()
 
 
 class Category(models.Model):
     category_name = models.IntegerField(choices=CATEGORY_NAME)
-
+    """
+    Stores a single category.
+    """
     def __str__(self):
+        """
+        Return category name as string
+        """
         return self.get_category_name_display()
 
 
 class Region(models.Model):
+    """
+    Stores a single region.
+    """
     voivodeship_name = models.IntegerField(choices=VOIVODESHIP_NAME)
 
     def __str__(self):
+        """
+        Return voivodeship name as string
+        """
         return self.get_voivodeship_name_display()
 
 
 class Event(models.Model):
+    """
+    Stores a single event, related to
+    :model:`Cycling_events_app.Region`,
+    :model:`Cycling_events_app.Category`,
+    :model:`Cycling_events_app.Profile` and
+    :model:`auth.User`.
+    """
     event_name = models.CharField('Nazwa wydarzenia:', max_length=128)
     event_type = models.IntegerField(choices=EVENT_TYPE)
     limit = models.IntegerField('Ilość miejsc:', blank=True)

@@ -1,7 +1,10 @@
 
-<!doctype html>
-<html xmlns="http://www.w3.org/1999/html">
 
+<!DOCTYPE html>
+<html>
+<head>
+{% load static %}
+<link rel="stylesheet" href="{% static 'style.css' %}">
 <head>
 
     <meta charset="utf-8"></head>
@@ -26,13 +29,13 @@
     <center><img src="/static/img.png" width='50%'</center>
 </br>
 
-    {% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
-    {% endfor %}
-</ul>
-{% endif %}
+{% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
 
 {% block content %} {% endblock %}
 {% endblock %}
