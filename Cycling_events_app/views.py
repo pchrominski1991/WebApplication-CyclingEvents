@@ -12,7 +12,13 @@ User = get_user_model()
 
 
 class LoginView(View):
+    """
+    Display view to log in user.
+    """
     def get(self, request, *args, **kwargs):
+        """
+        Handle GET requests: to display log in form.
+        """
         form = UserForm()
         context = {
             'form': form
@@ -20,6 +26,9 @@ class LoginView(View):
         return render(request, 'login.html', context)
 
     def post(self, request, *args, **kwargs):
+        """
+        Handle POST requests: to authenticate user.
+        """
         form = UserForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
@@ -44,19 +53,38 @@ class LoginView(View):
 
 
 class LogoutView(View):
+    """
+    View to log out user from app.
+    """
     def get(self, request, *args, **kwargs):
+        """
+        Handle GET requests: to log out user from app.
+        """
         logout(request)
-        messages.info(request, "Wylogowano się poprawnie.")
+        messages.success(request, "Wylogowano się poprawnie.")
         return redirect('login')
 
 
 class MainView(View):
+    """
+    View to display main page.
+    """
     def get(self, request):
+        """
+        Handle GET requests: to display main page..
+        """
         return render(request=request, template_name='main_page.html')
 
 
 class EventsView(View):
+    """
+    View display events.
+    """
     def get(self, request):
+        """
+        Handle get request:
+        to display all added events sorted by event_name
+        """
         form = FilterEventsForm()
         events = Event.objects.order_by('event_name')
         return render(request=request, template_name='events.html', context={
@@ -65,6 +93,10 @@ class EventsView(View):
         })
 
     def post(self, request):
+        """
+        Handle POST requests:
+        to filter events through: event_type, region name, categories.
+        """
         form = FilterEventsForm(request.POST)
         if form.is_valid():
             event_type = form.cleaned_data['event_type']
@@ -79,11 +111,21 @@ class EventsView(View):
 
 
 class AddEventView(LoginRequiredMixin, View):
+    """
+    Display view to add new event.
+    """
     def get(self, request):
+        """
+        Handle GET requests: to display add event form.
+        """
         form = AddEventForm()
         return render(request, 'add_event.html', {"form": form})
 
     def post(self, request):
+        """
+        Create new event object with the passed
+        POST variables.
+        """
         form = AddEventForm(request.POST)
         if form.is_valid():
             event_name = form.cleaned_data['event_name']
@@ -120,7 +162,13 @@ class AddEventView(LoginRequiredMixin, View):
 
 
 class RegisterView(View):
+    """
+    Display view to register user in app.
+    """
     def get(self, request, *args, **kwargs):
+        """
+        Handle GET requests: to display add event form.
+        """
         form = RegisterForm()
         context = {
             'form': form
@@ -128,6 +176,10 @@ class RegisterView(View):
         return render(request, 'register.html', context)
 
     def post(self, request, *args, **kwargs):
+        """
+        Create new user with the passed
+        POST variables.
+        """
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
@@ -148,7 +200,13 @@ class RegisterView(View):
 
 
 class ProfileView(View):
+    """
+    Display view with user profile.
+    """
     def get(self, request):
+        """
+        Handle GET requests: to display user profile.
+        """
         user = request.user
         profiles = Profile.objects.get(user_id=user.id)
         bike = profiles.bike
@@ -159,7 +217,13 @@ class ProfileView(View):
 
 
 class EditProfileView(View):
+    """
+    Display view to edit user profile.
+    """
     def get(self, request):
+        """
+        Handle GET requests: to display edit user profile.
+        """
         user_form = UserDetailsForm(instance=request.user)
         profile_form = ProfileDetailsForm(instance=request.user.profile)
         return render(request, 'edit_profile.html', {
@@ -168,6 +232,9 @@ class EditProfileView(View):
         })
 
     def post(self, request):
+        """
+        Handle POST requests: to update user profile.
+        """
         user_form = UserDetailsForm(request.POST, instance=request.user)
         profile_form = ProfileDetailsForm(request.POST or None,
                                           request.FILES or None,
@@ -186,7 +253,14 @@ class EditProfileView(View):
 
 
 class EventView(View):
+    """
+    Display view single event.
+    """
     def get(self, request, id):
+        """
+        Handle GET requests:
+        to display event details with the limit of available places.
+        """
         event = Event.objects.get(id=id)
         user = User.objects.get(id=event.event_creator_id)
         participants = event.event_participant.count()
@@ -202,7 +276,13 @@ class EventView(View):
 
 
 class EditEventView(LoginRequiredMixin, View):
+    """
+    Display view to edit event.
+    """
     def get(self, request, id):
+        """
+        Handle GET requests: to display edited event.
+        """
         event = Event.objects.get(id=id)
         if request.user.id == event.event_creator_id:
             form = EditEventForm(instance=event)
@@ -211,20 +291,29 @@ class EditEventView(LoginRequiredMixin, View):
             return redirect(f'/event_details/{id}/')
 
     def post(self, request, id):
+        """
+        Handle POST requests: to update event.
+        """
         event = Event.objects.get(id=id)
         form = EditEventForm(request.POST, instance=event)
         if form.is_valid():
             form.save()
             messages.success(
                 request,
-                "Pomyślnie zmieniono informacje o wyścigu."
+                "Pomyślnie zmieniono informacje o wydarzeniu."
             )
             return redirect(f'/event_details/{id}/')
         return render(request, 'edit_event.html', {"form": form})
 
 
 class MyEventsView(LoginRequiredMixin, View):
+    """
+    Display view with user events.
+    """
     def get(self, request):
+        """
+        Handle GET requests: to display user events.
+        """
         user = request.user
         profile = Profile.objects.get(user_id=user.id)
         event_creator = Event.objects.filter(
@@ -240,7 +329,15 @@ class MyEventsView(LoginRequiredMixin, View):
 
 
 class EventSignupView(LoginRequiredMixin, View):
+    """
+    View to sign up for the event
+    """
     def get(self, request, id):
+        """
+        Handle GET requests: to sign up for the events,
+        with checking that the limit is not exceeded
+        and that the user is not already signed up.
+        """
         event = Event.objects.get(id=id)
         participants = event.event_participant.all()
         if (int(event.limit) - int(participants.count())) > 0:
@@ -263,7 +360,13 @@ class EventSignupView(LoginRequiredMixin, View):
 
 
 class EventResignationView(View):
+    """
+    View used to cancel the event
+    """
     def get(self, request, id):
+        """
+        Handle GET requests: to cancel participation in event.
+        """
         user = request.user
         event = Event.objects.get(id=id)
         event.event_participant.remove(user.profile)
@@ -275,6 +378,9 @@ class EventResignationView(View):
 
 
 class ParticipantsView(View):
+    """
+    Display view with the list of participants.
+    """
     def get(self, request, id):
         event = Event.objects.get(id=id)
         participants = event.event_participant.all()
@@ -283,11 +389,21 @@ class ParticipantsView(View):
 
 
 class AddBikeView(View):
+    """
+    Display view to add new bike.
+    """
     def get(self, request):
+        """
+        Handle GET requests: to display add bike form.
+        """
         form = AddBikeForm()
         return render(request, 'add_bike.html', {"form": form})
 
     def post(self, request):
+        """
+        Create new announcement object with the passed
+        POST variables.
+        """
         form = AddBikeForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             brand = form.cleaned_data['brand']
@@ -310,18 +426,30 @@ class AddBikeView(View):
 
 
 class BikeDetailsView(View):
+    """
+    Display view single bike.
+    """
     def get(self, request, id):
         bike = Bike.objects.get(id=id)
         return render(request, "bike.html", context={"bike": bike})
 
 
 class EditBikeView(View):
+    """
+    Display view to edit event.
+    """
     def get(self, request, id):
+        """
+        Handle GET requests: to display edited bike.
+        """
         bike = Bike.objects.get(id=id)
         form = AddBikeForm(instance=bike)
         return render(request, 'add_bike.html', {"form": form})
 
     def post(self, request, id):
+        """
+        Handle POST requests: to update event.
+        """
         bike = Bike.objects.get(id=id)
         form = AddBikeForm(request.POST or None,
                            request.FILES or None,

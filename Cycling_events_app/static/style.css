@@ -1,0 +1,9 @@
+.alert-success {
+    color darkgreen;
+    background-color: rgba(147, 248, 114, 0.76);
+}
+
+.alert-error {
+    color: red;
+    background-color: #f8d7da;
+}
