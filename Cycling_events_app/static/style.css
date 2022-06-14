@@ -7,3 +7,12 @@
     color: red;
     background-color: #f8d7da;
 }
+
+img.rounded-corners {
+    border-radius: 50px;
+    width: 130px;
+}
+
+img.rounded-corners2 {
+    border-radius: 50px;
+}

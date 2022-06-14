@@ -15,7 +15,7 @@
             {% else %}
                 <h4>Witaj {{ user.username }}!</h4>
                  {%if user.profile.image %}
-                <img src="{{ user.profile.image.url }}" width="150" class="rounded corners" />
+                <img src="{{ user.profile.image.url }}" class="rounded-corners" />
                  {% endif %}
                  </br>
                 <a href="{% url 'logout' %}">Wyloguj</a> </br>
@@ -26,7 +26,7 @@
 {% block body %}
 
 <h3><p style="text-align: center"><a href="{% url 'my-events' %}">Moje wydarzenia</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="{% url 'events' %}">Wydarzenia</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'contact' %}">Kontakt</a></p></h3>
-    <center><img src="/static/img.png" width='50%'</center>
+    <center><img src="/static/img.png" width='50%' class="rounded-corners2" </center>
 </br>
 
 {% if messages %}
